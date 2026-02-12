@@ -74,7 +74,7 @@ export const Hero = ({ name, title, tagline, experience }: HeroProps) => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-livekit-cyan opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-livekit-cyan"></span>
             </span>
-            working in sundevs
+            Working in sundevs
           </Badge>
         </motion.div>
 
