@@ -1,46 +1,72 @@
-# Astro Starter Kit: Basics
+# Web Blog
 
-```sh
-pnpm create astro@latest -- --template basics
+Sitio web de presentación personal con blog. Portfolio y artículos construidos con [Astro](https://astro.build), React, MDX y Tailwind CSS.
+
+## Stack
+
+- **[Astro 5](https://astro.build)** — Sitio estático y contenido
+- **React** — Componentes interactivos (Hero, UI)
+- **MDX** — Entradas de blog con Markdown + JSX
+- **Tailwind CSS v4** — Estilos y diseño
+- **Framer Motion** — Animaciones
+- **Radix UI** — Componentes accesibles (Avatar, Badge, Button, Card, Sheet, etc.)
+
+## Requisitos
+
+- [Node.js](https://nodejs.org/) 18+
+- [pnpm](https://pnpm.io/) (recomendado) o npm/yarn
+
+## Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/IGUNUBLUE/web-blog.git
+cd web-blog
+
+# Instalar dependencias
+pnpm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Scripts
 
-## 🚀 Project Structure
+| Comando        | Descripción              |
+|----------------|--------------------------|
+| `pnpm dev`     | Servidor de desarrollo   |
+| `pnpm build`   | Build de producción      |
+| `pnpm preview` | Vista previa del build   |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Estructura del proyecto
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```
+src/
+├── components/     # Componentes React y Astro
+│   ├── ui/         # Componentes UI (shadcn-style)
+│   ├── Hero.tsx
+│   └── Welcome.astro
+├── content/
+│   └── blog/       # Entradas del blog (.md)
+├── layouts/        # Layouts Astro
+├── lib/            # Utilidades
+├── pages/          # Rutas (/, /blog, /blog/[...slug])
+└── styles/         # CSS global
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Añadir una entrada al blog
 
-## 🧞 Commands
+Crea un archivo `.md` en `src/content/blog/` con frontmatter:
 
-All commands are run from the root of the project, from a terminal:
+```yaml
+---
+title: Título del post
+description: Breve descripción
+date: 2025-01-15
+author: Lenin AGC
+tags: [astro, react, tailwind]
+---
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+El contenido en Markdown (y opcionalmente MDX) va debajo del frontmatter.
 
-## 👀 Want to learn more?
+## Licencia
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+[Apache-2.0](LICENSE)
