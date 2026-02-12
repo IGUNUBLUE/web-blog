@@ -1,0 +1,104 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.id }, props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = post.data.date.toLocaleDateString('en-US', {
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric'
+});
+---
+
+<Layout title={`${post.data.title} | Lenin AGC`} description={post.data.title}>
+	<article class="container max-w-3xl mx-auto space-y-8 pt-8 md:pt-10 pb-12">
+		<header class="space-y-4 text-center">
+			<div class="flex justify-center gap-2">
+				{post.data.categories?.map(cat => (
+					<Badge variant="secondary" class="bg-livekit-blue/10 text-livekit-blue hover:bg-livekit-blue/20 border-none">
+						{cat}
+					</Badge>
+				))}
+			</div>
+			<h1 class="text-4xl md:text-5xl font-bold tracking-tight text-livekit-cyan">{post.data.title}</h1>
+			<div class="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+				<span>{post.data.author}</span>
+				<Separator orientation="vertical" class="h-4" />
+				<time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+			</div>
+		</header>
+
+		<Separator />
+
+		<div class="prose prose-invert prose-livekit max-w-none
+			prose-headings:text-livekit-cyan prose-headings:font-bold
+			prose-a:text-livekit-blue hover:prose-a:text-livekit-cyan prose-a:transition-colors
+			prose-img:rounded-xl prose-img:shadow-2xl prose-img:border prose-img:border-border
+			prose-code:text-livekit-cyan prose-code:bg-muted prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none
+			prose-pre:border prose-pre:border-border prose-pre:bg-livekit-dark
+			prose-strong:text-foreground">
+			<Content />
+		</div>
+
+		<Separator />
+
+		<footer class="flex flex-wrap gap-2 justify-center">
+			{post.data.tags?.map(tag => (
+				<Badge variant="outline" class="text-xs border-border hover:border-livekit-blue/50 transition-colors">
+					#{tag}
+				</Badge>
+			))}
+		</footer>
+
+		<div class="flex justify-between items-center pt-10">
+			{post.data.prev && typeof post.data.prev === 'object' && (
+				<Button variant="ghost" asChild class="hover:text-livekit-cyan">
+					<a href={post.data.prev.link}>
+						← {post.data.prev.text}
+					</a>
+				</Button>
+			)}
+			<div class="flex-grow"></div>
+			{post.data.next && typeof post.data.next === 'object' && (
+				<Button variant="ghost" asChild class="hover:text-livekit-cyan">
+					<a href={post.data.next.link}>
+						{post.data.next.text} →
+					</a>
+				</Button>
+			)}
+		</div>
+	</article>
+</Layout>
+
+<style is:global>
+	@reference "../../styles/global.css";
+
+	/* Custom styles for markdown content to match LiveKit aesthetic */
+	.prose-livekit h2 {
+		@apply mt-12 mb-6 pb-2 border-b border-border/50;
+	}
+	.prose-livekit p {
+		@apply leading-relaxed mb-6 text-foreground/90;
+	}
+	.prose-livekit ul, .prose-livekit ol {
+		@apply mb-6 space-y-2;
+	}
+	.prose-livekit li {
+		@apply pl-2;
+	}
+	.prose-livekit blockquote {
+		@apply border-l-4 border-livekit-blue bg-livekit-blue/5 py-2 px-6 italic rounded-r-lg;
+	}
+</style>

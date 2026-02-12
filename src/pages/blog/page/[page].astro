@@ -1,0 +1,117 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+const PAGE_SIZE = 6;
+const allPosts = (await getCollection('blog')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const totalPages = Math.max(1, Math.ceil(allPosts.length / PAGE_SIZE));
+
+export async function getStaticPaths() {
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+	);
+	const pageSize = 6;
+	const pages = Math.max(1, Math.ceil(posts.length / pageSize));
+
+	return Array.from({ length: pages - 1 }, (_, idx) => {
+		const page = idx + 2;
+		const start = (page - 1) * pageSize;
+		const end = start + pageSize;
+		return {
+			params: { page: String(page) },
+			props: {
+				page,
+				posts: posts.slice(start, end),
+				totalPages: pages,
+			},
+		};
+	});
+}
+
+const { page, posts } = Astro.props as {
+	page: number;
+	posts: typeof allPosts;
+	totalPages: number;
+};
+---
+
+<Layout title={`Blog - Página ${page} | Lenin AGC`} description="Blog posts paginados">
+	<div class="container space-y-10 pt-8 md:pt-10 pb-12">
+		<section class="space-y-4">
+			<h1 class="text-4xl font-bold tracking-tight lg:text-5xl text-livekit-cyan">My space...</h1>
+			<p class="text-xl text-muted-foreground">
+				This is my blog and agenda. I write about GNU/Linux, programming, code snippets, tools, tutorials.
+			</p>
+		</section>
+
+		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			{posts.map((post) => (
+				<a href={`/blog/${post.id}`} class="group">
+					<Card class="h-full transition-all hover:border-livekit-blue/50 hover:bg-accent/50">
+						<CardHeader>
+							<div class="flex justify-between items-start mb-2">
+								<Badge variant="outline" class="text-xs border-livekit-cyan/30 text-livekit-cyan">
+									{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+								</Badge>
+							</div>
+							<CardTitle class="group-hover:text-livekit-cyan transition-colors line-clamp-2">
+								{post.data.title}
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<div class="flex flex-wrap gap-2 mt-auto">
+								{post.data.tags?.slice(0, 3).map(tag => (
+									<span class="text-[10px] uppercase tracking-wider text-muted-foreground">#{tag}</span>
+								))}
+							</div>
+						</CardContent>
+					</Card>
+				</a>
+			))}
+		</div>
+
+		<nav class="flex items-center justify-center gap-2 pt-6" aria-label="Blog pagination">
+			<a
+				href={page === 2 ? '/blog' : `/blog/page/${page - 1}`}
+				class:list={[
+					'inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm transition-colors',
+					'border-border text-muted-foreground hover:border-livekit-blue/40 hover:text-livekit-cyan',
+				]}
+			>
+				Anterior
+			</a>
+
+			{Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+				<a
+					href={p === 1 ? '/blog' : `/blog/page/${p}`}
+					aria-current={p === page ? 'page' : undefined}
+					class:list={[
+						'inline-flex h-10 min-w-10 items-center justify-center rounded-md border px-3 text-sm transition-colors',
+						p === page
+							? 'border-livekit-blue bg-livekit-blue/15 text-livekit-cyan'
+							: 'border-border text-muted-foreground hover:border-livekit-blue/40 hover:text-livekit-cyan',
+					]}
+				>
+					{p}
+				</a>
+			))}
+
+			<a
+				href={page === totalPages ? '#' : `/blog/page/${page + 1}`}
+				aria-disabled={page === totalPages}
+				class:list={[
+					'inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm transition-colors',
+					page === totalPages
+						? 'pointer-events-none border-border/40 text-muted-foreground/50'
+						: 'border-border text-muted-foreground hover:border-livekit-blue/40 hover:text-livekit-cyan',
+				]}
+			>
+				Siguiente
+			</a>
+		</nav>
+	</div>
+</Layout>

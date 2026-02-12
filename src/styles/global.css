@@ -1,0 +1,96 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-background: oklch(0.08 0.01 240);
+  --color-foreground: oklch(0.98 0.01 240);
+
+  --color-card: oklch(0.1 0.02 240);
+  --color-card-foreground: oklch(0.98 0.01 240);
+
+  --color-popover: oklch(0.1 0.02 240);
+  --color-popover-foreground: oklch(0.98 0.01 240);
+
+  --color-primary: oklch(0.78 0.16 205);
+  --color-primary-foreground: oklch(0.98 0.01 240);
+
+  --color-secondary: oklch(0.15 0.03 240);
+  --color-secondary-foreground: oklch(0.98 0.01 240);
+
+  --color-muted: oklch(0.15 0.02 240);
+  --color-muted-foreground: oklch(0.65 0.02 240);
+
+  --color-accent: oklch(0.2 0.04 240);
+  --color-accent-foreground: oklch(0.98 0.01 240);
+
+  --color-destructive: oklch(0.55 0.2 20);
+  --color-destructive-foreground: oklch(0.98 0.01 20);
+
+  --color-border: oklch(0.18 0.02 240);
+  --color-input: oklch(0.18 0.02 240);
+  --color-ring: oklch(0.78 0.16 205);
+
+  --radius-lg: 1rem;
+  --radius-md: calc(1rem - 2px);
+  --radius-sm: calc(1rem - 4px);
+
+  /* LiveKit-inspired accents */
+  --color-livekit-blue: oklch(0.78 0.16 205);
+  --color-livekit-cyan: oklch(0.78 0.16 205);
+  --color-livekit-dark: oklch(0.06 0.01 240);
+  
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@layer base {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: 
+      radial-gradient(at 0% 0%, oklch(0.26 0.08 205 / 0.15) 0px, transparent 70%),
+      radial-gradient(at 100% 0%, oklch(0.3 0.08 205 / 0.1) 0px, transparent 70%),
+      radial-gradient(at 50% 50%, oklch(0.2 0.05 205 / 0.05) 0px, transparent 80%);
+    background-attachment: fixed;
+  }
+
+  .container {
+    @apply mx-auto px-6 md:px-10 lg:px-12 max-w-7xl;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70;
+  }
+  
+  .glass {
+    @apply bg-background/40 backdrop-blur-xl border border-white/5;
+  }
+}
+
+/* Custom scrollbar matching LiveKit theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-livekit-blue) var(--color-livekit-dark);
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-livekit-dark);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-livekit-blue);
+  border-radius: 20px;
+}

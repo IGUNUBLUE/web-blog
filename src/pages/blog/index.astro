@@ -1,0 +1,76 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+const PAGE_SIZE = 6;
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+const currentPage = 1;
+const pagePosts = posts.slice(0, PAGE_SIZE);
+---
+
+<Layout title="Blog | Lenin AGC" description="My space... GNU/Linux, programming, code snippets, tools, tutorials.">
+	<div class="container space-y-10 pt-8 md:pt-10 pb-12">
+		<section class="space-y-4">
+			<h1 class="text-4xl font-bold tracking-tight lg:text-5xl text-livekit-cyan">My space...</h1>
+			<p class="text-xl text-muted-foreground">
+				This is my blog and agenda. I write about GNU/Linux, programming, code snippets, tools, tutorials.
+			</p>
+		</section>
+
+		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			{pagePosts.map((post) => (
+				<a href={`/blog/${post.id}`} class="group">
+					<Card class="h-full transition-all hover:border-livekit-blue/50 hover:bg-accent/50">
+						<CardHeader>
+							<div class="flex justify-between items-start mb-2">
+								<Badge variant="outline" class="text-xs border-livekit-cyan/30 text-livekit-cyan">
+									{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+								</Badge>
+							</div>
+							<CardTitle class="group-hover:text-livekit-cyan transition-colors line-clamp-2">
+								{post.data.title}
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<div class="flex flex-wrap gap-2 mt-auto">
+								{post.data.tags?.slice(0, 3).map(tag => (
+									<span class="text-[10px] uppercase tracking-wider text-muted-foreground">#{tag}</span>
+								))}
+							</div>
+						</CardContent>
+					</Card>
+				</a>
+			))}
+		</div>
+
+		{totalPages > 1 && (
+			<nav class="flex items-center justify-center gap-2 pt-6" aria-label="Blog pagination">
+				{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+					<a
+						href={page === 1 ? '/blog' : `/blog/page/${page}`}
+						aria-current={page === currentPage ? 'page' : undefined}
+						class:list={[
+							'inline-flex h-10 min-w-10 items-center justify-center rounded-md border px-3 text-sm transition-colors',
+							page === currentPage
+								? 'border-livekit-blue bg-livekit-blue/15 text-livekit-cyan'
+								: 'border-border text-muted-foreground hover:border-livekit-blue/40 hover:text-livekit-cyan',
+						]}
+					>
+						{page}
+					</a>
+				))}
+				<a
+					href="/blog/page/2"
+					class="ml-2 inline-flex h-10 items-center justify-center rounded-md border border-border px-4 text-sm text-muted-foreground transition-colors hover:border-livekit-blue/40 hover:text-livekit-cyan"
+				>
+					Siguiente
+				</a>
+			</nav>
+		)}
+	</div>
+</Layout>

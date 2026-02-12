@@ -1,0 +1,111 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { Hero } from '@/components/Hero';
+import { Badge } from "@/components/ui/badge";
+import { calculateYearsOfExperience } from '@/lib/utils';
+
+const experience = calculateYearsOfExperience("2021-08-02");
+const expYears = experience.toFixed(1);
+
+const features = [
+  { title: "JavaScript", details: `${expYears}+ years crafting front-end experiences, from vanilla JS to modern frameworks.`, icon: "JS", badge: `${expYears}y exp`, size: "large" },
+  { title: "React", details: `Building dynamic, component-driven UIs with React and its ecosystem.`, icon: "⚛", badge: `${expYears}y exp`, size: "small" },
+  { title: "Next.js", details: `Full-stack apps with SSR, ISR, and the App Router.`, icon: "▲", badge: `${expYears}y exp`, size: "small" },
+  { title: "Self-management", details: "Thrives on challenges, turning them into achievements with minimal guidance. Proactive and deadline-driven.", icon: "◎", size: "small" },
+  { title: "Curious", details: "Constantly exploring new technology frontiers — from Linux internals to cloud architectures.", icon: "⟐", size: "small" },
+  { title: "Free Software", details: "Advocates for open-source software, contributing to community-driven innovation and transparency.", icon: "◇", badge: "OSS", size: "large" }
+];
+---
+
+<Layout title="Lenin AGC | Full Stack Developer">
+	<Hero 
+		client:load
+		name="Lenin AGC" 
+		title="Full Stack Web Dev" 
+		tagline="Passionate JavaScript enthusiast from Colombia who loves to create and deliver high-quality products."
+		experience={experience}
+	/>
+
+	<!-- LiveKit-style glowing divider -->
+	<div class="relative w-full h-px">
+		<div class="absolute inset-0 bg-gradient-to-r from-transparent via-livekit-cyan/60 to-transparent"></div>
+		<div class="absolute inset-0 bg-gradient-to-r from-transparent via-livekit-cyan/30 to-transparent blur-sm"></div>
+		<div class="absolute -top-4 left-1/2 -translate-x-1/2 w-1/2 h-8 bg-livekit-cyan/8 blur-xl pointer-events-none"></div>
+	</div>
+
+	<div class="container space-y-32 pb-20 pt-16">
+		<!-- Features/Skills Section — Bento Grid 2026 -->
+		<section class="space-y-16 relative py-20">
+			<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-livekit-blue/5 blur-[120px] -z-10 pointer-events-none rounded-full"></div>
+			<div class="space-y-4">
+				<h2 class="text-4xl md:text-5xl font-bold tracking-tighter text-livekit-cyan">Expertise & Passion</h2>
+				<p class="text-xl text-muted-foreground max-w-2xl font-light">
+					Focused on modern web technologies and building scalable, user-centric applications.
+				</p>
+			</div>
+			
+			<!-- Bento Grid -->
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+				{features.map((feature, i) => (
+					<div
+						class:list={[
+							"group relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md overflow-hidden transition-all duration-500",
+							"hover:border-livekit-cyan/40 hover:bg-white/[0.06] hover:shadow-[0_0_40px_-12px_rgba(0,208,255,0.15)]",
+							feature.size === "large" ? "sm:col-span-2 lg:col-span-2" : "",
+						]}
+					>
+						{/* Top glow line on hover */}
+						<div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-livekit-cyan/0 to-transparent group-hover:via-livekit-cyan/60 transition-all duration-700"></div>
+
+						<div class:list={[
+							"p-6 md:p-8 flex flex-col justify-between h-full",
+							feature.size === "large" ? "min-h-[180px]" : "min-h-[200px]",
+						]}>
+							{/* Header row: icon + badge */}
+							<div class="flex items-start justify-between mb-6">
+								<div class="flex items-center justify-center w-11 h-11 rounded-xl bg-livekit-cyan/10 border border-livekit-cyan/20 text-livekit-cyan text-lg font-bold group-hover:bg-livekit-cyan/20 group-hover:border-livekit-cyan/40 transition-all duration-500">
+									{feature.icon}
+								</div>
+								{feature.badge && (
+									<Badge variant="outline" class="border-white/10 text-muted-foreground text-[10px] uppercase tracking-widest px-2.5 py-0.5 group-hover:border-livekit-cyan/30 group-hover:text-livekit-cyan transition-all duration-500">
+										{feature.badge}
+									</Badge>
+								)}
+							</div>
+
+							{/* Content */}
+							<div class="space-y-2 mt-auto">
+								<h3 class="text-xl font-bold tracking-tight text-foreground group-hover:text-livekit-cyan transition-colors duration-300">
+									{feature.title}
+								</h3>
+								<p class="text-sm text-muted-foreground leading-relaxed font-light">
+									{feature.details}
+								</p>
+							</div>
+						</div>
+					</div>
+				))}
+			</div>
+		</section>
+
+		<!-- CTA Section -->
+		<section class="relative rounded-[2.5rem] bg-livekit-blue/10 border border-livekit-blue/20 p-12 md:p-24 text-center space-y-10 overflow-hidden">
+			<div class="absolute top-0 right-0 w-64 h-64 bg-livekit-blue/20 blur-[100px] -z-10"></div>
+			<div class="absolute bottom-0 left-0 w-64 h-64 bg-livekit-cyan/10 blur-[100px] -z-10"></div>
+			
+			<h2 class="text-4xl md:text-6xl font-bold tracking-tighter max-w-3xl mx-auto leading-[1.1]">
+				Let's build something amazing together.
+			</h2>
+			<p class="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-light">
+				I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions.
+			</p>
+			<a 
+				href="https://www.linkedin.com/in/lenin-agc" 
+				target="_blank"
+				class="inline-flex items-center justify-center bg-livekit-blue hover:bg-livekit-blue/90 text-white px-12 h-16 rounded-full text-xl font-medium transition-all hover:scale-105 active:scale-95 shadow-xl shadow-livekit-blue/20"
+			>
+				Get in Touch
+			</a>
+		</section>
+	</div>
+</Layout>
