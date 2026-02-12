@@ -1,4 +1,6 @@
 ---
+import Analytics from '@vercel/analytics/astro';
+
 interface Props {
 	title?: string;
 	description?: string;
@@ -116,6 +118,7 @@ const isBlog = pathname.startsWith("/blog");
 		<main class="flex-1">
 			<slot />
 		</main>
+		<Analytics />
 		<footer class="border-t footer-border py-12 footer-bg">
 			<div class="container flex flex-col items-center justify-between gap-6 md:h-24 md:flex-row">
 				<div class="flex flex-col gap-2">
