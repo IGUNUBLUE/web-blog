@@ -1,7 +1,9 @@
 ---
 title: Haciendo deploy del backend en heroku
+description: Guía completa para hacer deploy de un backend Node.js/Express con Sequelize en Heroku, incluyendo heroku-cli y git subtree.
 author: Lenin AGC
 date: 2021-05-29 12:33:00
+cover: /images/blog/post8_img0.webp
 categories: [Deploy-tools, Heroku]
 tags: [backend, nodeJS, expressJS, Sequelize]
 prev:
@@ -11,8 +13,6 @@ next:
   text: 'How to add vercel-analytics to vitepress'
   link: '/blog/how-to-add-vercel-analytics-to-vitepress-projects'
 ---
-# Haciendo deploy del backend en heroku
-![heroku 1](/assets/img_/blog/post8_img0.webp)
 
 Buenos días a todos!! hoy voy a mostrarles como hice para dejar online mi proyecto individual para el E-learning [HENRY](https://www.soyhenry.com/) del cual me gradué como Jr Full stack web developer. He utilizado dos plataformas bastante conocidas (creo) y en una de ellas me encontré con algunas cosas o configuraciones que no entendía.
 Exactamente estoy hablando sobre heroku. La aplicación esta construida con nodeJS, el framework expressJS, reactJS pare el front y uso Sequelize (ORM) para la manipulación de la base de datos (postgres).
@@ -37,7 +37,7 @@ La cuestión es que heroku me permite conectar el repositorio de [github](https:
 
 Nada en la vida es perfecto... resulta que al enlazar el repositorio con la plataforma el deploy se genera sobre el directorio raíz del proyecto y nuestro directorio raíz tiene dos carpetas: API(backend) y client(frontend).
 
-![github 1](/assets/img_/blog/post8_img1.webp)
+![Estructura del repositorio en GitHub](/images/blog/post8_img1.webp)
 
 La imagen anterior nos da una idea de a que me refiero. Ahora, si heroku intenta hacer un deploy de ese repositorio no encontrará los archivos necesario para entender como compilar e iniciar nuestra aplicación (esta es mi hipótesis). Entonces hay que indicarle que vamos a entrar a la carpeta **api** y desde ahi haremos el lanzamiento. ¿como?
 
@@ -46,19 +46,19 @@ La imagen anterior nos da una idea de a que me refiero. Ahora, si heroku intenta
 Como saben uso GNU/Linux (manjaro LXQT) y la instalación la haré sobre dicho sistema, pero igual les dejo el link a la documentación para que pueden hacerlo en su sistema favorito. [¡CLICK AQUÍ!](https://devcenter.heroku.com/articles/heroku-cli).
 Abrimos una terminal presionando **Ctrl+Alt+t**, escribimos:
 
-```
+```bash
 sudo pacman -Sy yay
 ```
 
 De esta forma tendremos **yay** que se encargará de buscar el paquete en el repositorio comunitario de arch (AUR). luego:
 
-```
+```bash
 sudo yay -Sy heroku-cli-bin
 ```
 
 Nos saldrá una pregunta tipo: _Diffs to show?_, simplemente presionamos _N_ para continuar. También veremos: _Proceed with install? Y/n_, obviamente presionaremos _y_. Tomara unos minutos dependiendo de la conexión y veremos algo asi:
 
-![github 1](/assets/img_/blog/post8_img2.webp)
+![Heroku CLI instalado](/images/blog/post8_img2.webp)
 
 ¡Listo! tenemos heroku-cli instalado.
 
@@ -66,50 +66,50 @@ Nos saldrá una pregunta tipo: _Diffs to show?_, simplemente presionamos _N_ par
 
 Para poder operar con las apps que tenemos en heroku primero debemos autenticarnos y eso lo haremos con el comando:
 
-```
+```bash
 heroku login
 ```
 
 Veremos _heroku: Press any key to open up the browser to login or q to exit:_ presionamos la tecla de preferencia.
 Se abrirá el navegador y ahi procederemos a ingresar nuestra información de login de heroku. Una vez echo eso, estamos ready para el juego.
 
-#### Paso 3 - Push y deploy
+### Paso 3 - Push y deploy
 
 Lo que sigue es ubicarnos sobre la carpeta con nuestro backend (api), desde la terminar navegaremos hasta ahí.
 
-![github 1](/assets/img_/blog/post8_img4.webp)
+![Terminal en directorio del backend](/images/blog/post8_img4.webp)
 
 Luego debemos asociar este código fuente con nuestra app de heroku previamente creada. ¿No lo hicimos? ok, ok, una (mejor varias 🤣) imagen vale mas que mi palabras.
 
-![github 1](/assets/img_/blog/post8_img5.webp)
-![github 1](/assets/img_/blog/post8_img6.webp)
-![github 1](/assets/img_/blog/post8_img7.webp)
+![Crear app en Heroku paso 1](/images/blog/post8_img5.webp)
+![Crear app en Heroku paso 2](/images/blog/post8_img6.webp)
+![Crear app en Heroku paso 3](/images/blog/post8_img7.webp)
 
 continuamos... Con la app creada y ubicados sobre la raíz del proyecto, desde la terminal ejecutamos:
 
-```
+```bash
 heroku git:remote -a nombre_de_nuestra_app_en_heroku
 ```
 
 Con esto asociamos nuestro código fuente con la app creada en heroku. Lo que sigue es empujar solo la carpeta del backend.
 Para eso ejecutamos:
 
-```
+```bash
 git subtree push --prefix nombre_de_la_carpeta_que_tiene_la_fuente_del_backend heroku master
 ```
 
-![github 1](/assets/img_/blog/post8_img8.webp)
+![Resultado del deploy en terminal](/images/blog/post8_img8.webp)
 
 A la izquierda el resultado de ejecutar el comando anterior y a la derecha de la imagen el **log** que nos facilita heroku. Para ver este log debes abrir otra terminal, ir al directorio raíz de la aplicación y ejecutar:
 
-```
+```bash
 heroku logs --tail
 ```
 
 Por ultimo no olviden configurar sus variables de entorno en la pestaña **setting** y el **buildpacks** de la app.
 
-![github 1](/assets/img_/blog/post8_img9.webp)
-![github 1](/assets/img_/blog/post8_img10.webp)
+![Variables de entorno en Heroku](/images/blog/post8_img9.webp)
+![Buildpacks en Heroku](/images/blog/post8_img10.webp)
 
 Listo!! happy coding!!...
 Para el proximo articulo les explicare como usar la base de datos de heroku y conectarla con la app.

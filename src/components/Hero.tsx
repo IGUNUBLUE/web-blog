@@ -13,19 +13,19 @@ interface HeroProps {
 export const Hero = ({ name, title, tagline, experience }: HeroProps) => {
   return (
     <section className="relative w-full min-h-[100dvh] flex flex-col justify-center overflow-hidden">
-      {/* Animated Background Elements - Smoother and more integrated */}
+      {/* Animated Background Elements */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 3, ease: "easeOut" }}
-          className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-livekit-blue/15 blur-[140px] rounded-full mix-blend-screen"
+          className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-livekit-blue/15 blur-[140px] rounded-full"
         />
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 3, delay: 0.8, ease: "easeOut" }}
-          className="absolute bottom-[-10%] right-[-5%] w-[60%] h-[60%] bg-livekit-cyan/10 blur-[120px] rounded-full mix-blend-screen"
+          className="absolute bottom-[-10%] right-[-5%] w-[60%] h-[60%] bg-livekit-cyan/10 blur-[120px] rounded-full"
         />
       </div>
 
@@ -37,16 +37,11 @@ export const Hero = ({ name, title, tagline, experience }: HeroProps) => {
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       >
         <div
-          className="absolute inset-0 opacity-45"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at center, rgba(0, 208, 255, 0.22) 1px, transparent 1px)",
-            backgroundSize: "14px 14px",
-          }}
+          className="hero-dot-grid absolute inset-0 opacity-45"
         />
 
         <div className="absolute inset-0 bg-gradient-to-b from-livekit-dark/30 via-transparent to-livekit-dark/50" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,208,255,0.12),transparent_60%)]" />
+        <div className="hero-radial-glow absolute inset-0" />
 
         <motion.div
           animate={{
@@ -54,7 +49,7 @@ export const Hero = ({ name, title, tagline, experience }: HeroProps) => {
             top: ["12%", "30%", "65%", "45%", "12%"],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute h-3 w-3 rounded-full bg-livekit-cyan shadow-[0_0_20px_5px_rgba(0,208,255,0.8)]"
+          className="absolute h-3 w-3 rounded-full bg-livekit-cyan hero-particle-glow"
         />
 
         <motion.div
@@ -63,7 +58,7 @@ export const Hero = ({ name, title, tagline, experience }: HeroProps) => {
             top: ["20%", "52%", "78%", "28%", "20%"],
           }}
           transition={{ duration: 17, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute h-2.5 w-2.5 rounded-full bg-livekit-blue shadow-[0_0_16px_4px_rgba(0,165,255,0.75)]"
+          className="absolute h-2.5 w-2.5 rounded-full bg-livekit-blue hero-particle-glow-alt"
         />
 
       </motion.div>
@@ -110,10 +105,14 @@ export const Hero = ({ name, title, tagline, experience }: HeroProps) => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-wrap gap-4 pt-4"
         >
-          <Button size="lg" className="bg-livekit-blue hover:bg-livekit-blue/90 text-white px-8 h-14 rounded-full text-lg group" asChild>
-            <a href="https://www.linkedin.com/in/lenin-agc" target="_blank">
+          <Button
+            size="lg"
+            className="relative overflow-hidden bg-gradient-to-r from-livekit-cyan to-livekit-blue text-primary-foreground px-8 h-14 rounded-full text-lg font-semibold shadow-[0_8px_30px_-6px_var(--color-livekit-cyan)] transition-all duration-300 hover:shadow-[0_12px_40px_-8px_var(--color-livekit-cyan)] hover:scale-[1.02] active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-livekit-cyan/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background group"
+            asChild
+          >
+            <a href="mailto:lenin.agc@gmail.com">
               Get in Touch
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1.5 transition-transform duration-300" />
             </a>
           </Button>
           

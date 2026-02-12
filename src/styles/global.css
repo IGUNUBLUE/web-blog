@@ -2,6 +2,7 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
+  /* Static defaults for Tailwind — dark theme values */
   --color-background: oklch(0.08 0.01 240);
   --color-foreground: oklch(0.98 0.01 240);
 
@@ -34,12 +35,68 @@
   --radius-md: calc(1rem - 2px);
   --radius-sm: calc(1rem - 4px);
 
-  /* LiveKit-inspired accents */
   --color-livekit-blue: oklch(0.78 0.16 205);
   --color-livekit-cyan: oklch(0.78 0.16 205);
   --color-livekit-dark: oklch(0.06 0.01 240);
-  
+
   --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ── Light theme overrides ── */
+.light {
+  --color-background: oklch(0.97 0.005 240);
+  --color-foreground: oklch(0.15 0.02 240);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.15 0.02 240);
+  --color-primary: oklch(0.50 0.18 205);
+  --color-primary-foreground: oklch(0.98 0.01 240);
+  --color-secondary: oklch(0.93 0.01 240);
+  --color-secondary-foreground: oklch(0.20 0.02 240);
+  --color-muted: oklch(0.93 0.005 240);
+  --color-muted-foreground: oklch(0.45 0.02 240);
+  --color-accent: oklch(0.90 0.02 205);
+  --color-accent-foreground: oklch(0.15 0.02 240);
+  --color-border: oklch(0.88 0.01 240);
+  --color-input: oklch(0.88 0.01 240);
+  --color-ring: oklch(0.50 0.18 205);
+  --color-livekit-blue: oklch(0.50 0.18 205);
+  --color-livekit-cyan: oklch(0.45 0.20 205);
+  --color-livekit-dark: oklch(0.95 0.005 240);
+  color-scheme: light;
+}
+
+/* ── Theme-aware custom properties ── */
+:root, .dark {
+  --nav-bg: rgba(255, 255, 255, 0.04);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-hover: rgba(255, 255, 255, 0.06);
+  --nav-shadow: 0 4px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --sep-color: rgba(255, 255, 255, 0.1);
+  --dot-color: rgba(0, 208, 255, 0.22);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-hover-bg: rgba(255, 255, 255, 0.06);
+  --glass-hover-border: rgba(0, 208, 255, 0.4);
+  --glass-glow: rgba(0, 208, 255, 0.15);
+  --particle-cyan: rgba(0, 208, 255, 0.8);
+  --particle-blue: rgba(0, 165, 255, 0.75);
+  color-scheme: dark;
+}
+
+.light {
+  --nav-bg: rgba(255, 255, 255, 0.7);
+  --nav-border: rgba(0, 0, 0, 0.08);
+  --nav-hover: rgba(0, 0, 0, 0.04);
+  --nav-shadow: 0 4px 30px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --sep-color: rgba(0, 0, 0, 0.1);
+  --dot-color: rgba(0, 130, 200, 0.18);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-hover-bg: rgba(255, 255, 255, 0.8);
+  --glass-hover-border: rgba(0, 130, 200, 0.35);
+  --glass-glow: rgba(0, 130, 200, 0.1);
+  --particle-cyan: rgba(0, 130, 200, 0.6);
+  --particle-blue: rgba(0, 100, 180, 0.5);
 }
 
 @layer base {
@@ -51,14 +108,27 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-attachment: fixed;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body,
+  :root body {
     background-image: 
       radial-gradient(at 0% 0%, oklch(0.26 0.08 205 / 0.15) 0px, transparent 70%),
       radial-gradient(at 100% 0%, oklch(0.3 0.08 205 / 0.1) 0px, transparent 70%),
       radial-gradient(at 50% 50%, oklch(0.2 0.05 205 / 0.05) 0px, transparent 80%);
-    background-attachment: fixed;
+  }
+
+  .light body {
+    background-image: 
+      radial-gradient(at 0% 0%, oklch(0.85 0.06 205 / 0.2) 0px, transparent 70%),
+      radial-gradient(at 100% 0%, oklch(0.88 0.05 205 / 0.15) 0px, transparent 70%),
+      radial-gradient(at 50% 50%, oklch(0.92 0.03 205 / 0.08) 0px, transparent 80%);
   }
 
   .container {
@@ -72,14 +142,70 @@
   }
   
   .glass {
-    @apply bg-background/40 backdrop-blur-xl border border-white/5;
+    @apply bg-background/40 backdrop-blur-xl;
+    border: 1px solid var(--glass-border);
   }
 }
 
-/* Custom scrollbar matching LiveKit theme */
+/* ── Nav pill ── */
+.nav-pill {
+  background: var(--nav-bg);
+  border: 1px solid var(--nav-border);
+  box-shadow: var(--nav-shadow);
+}
+
+.nav-sep {
+  background: var(--sep-color);
+}
+
+.nav-link-hover:hover {
+  background: var(--nav-hover);
+}
+
+/* ── Bento cards ── */
+.bento-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.bento-card:hover {
+  background: var(--glass-hover-bg);
+  border-color: var(--glass-hover-border);
+  box-shadow: 0 0 40px -12px var(--glass-glow);
+}
+
+/* ── Hero ── */
+.hero-dot-grid {
+  background-image: radial-gradient(circle at center, var(--dot-color) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.hero-radial-glow {
+  background: radial-gradient(ellipse at center, var(--dot-color), transparent 60%);
+}
+
+.hero-particle-glow {
+  box-shadow: 0 0 20px 5px var(--particle-cyan);
+}
+
+.hero-particle-glow-alt {
+  box-shadow: 0 0 16px 4px var(--particle-blue);
+}
+
+/* ── Footer ── */
+.footer-border {
+  border-color: var(--sep-color);
+}
+
+.footer-bg {
+  background: var(--color-livekit-dark, oklch(0.06 0.01 240));
+  opacity: 0.3;
+}
+
+/* ── Scrollbar ── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-livekit-blue) var(--color-livekit-dark);
+  scrollbar-color: var(--color-livekit-blue, oklch(0.78 0.16 205)) var(--color-livekit-dark, oklch(0.06 0.01 240));
 }
 
 *::-webkit-scrollbar {
@@ -87,10 +213,10 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: var(--color-livekit-dark);
+  background: var(--color-livekit-dark, oklch(0.06 0.01 240));
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--color-livekit-blue);
+  background-color: var(--color-livekit-blue, oklch(0.78 0.16 205));
   border-radius: 20px;
 }

@@ -3,6 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import { Hero } from '@/components/Hero';
 import { Badge } from "@/components/ui/badge";
 import { calculateYearsOfExperience } from '@/lib/utils';
+import { getCollection } from 'astro:content';
 
 const experience = calculateYearsOfExperience("2021-08-02");
 const expYears = experience.toFixed(1);
@@ -15,6 +16,10 @@ const features = [
   { title: "Curious", details: "Constantly exploring new technology frontiers — from Linux internals to cloud architectures.", icon: "⟐", size: "small" },
   { title: "Free Software", details: "Advocates for open-source software, contributing to community-driven innovation and transparency.", icon: "◇", badge: "OSS", size: "large" }
 ];
+
+const latestPosts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
 ---
 
 <Layout title="Lenin AGC | Full Stack Developer">
@@ -49,8 +54,7 @@ const features = [
 				{features.map((feature, i) => (
 					<div
 						class:list={[
-							"group relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md overflow-hidden transition-all duration-500",
-							"hover:border-livekit-cyan/40 hover:bg-white/[0.06] hover:shadow-[0_0_40px_-12px_rgba(0,208,255,0.15)]",
+							"bento-card group relative rounded-2xl backdrop-blur-md overflow-hidden transition-all duration-500",
 							feature.size === "large" ? "sm:col-span-2 lg:col-span-2" : "",
 						]}
 					>
@@ -67,7 +71,7 @@ const features = [
 									{feature.icon}
 								</div>
 								{feature.badge && (
-									<Badge variant="outline" class="border-white/10 text-muted-foreground text-[10px] uppercase tracking-widest px-2.5 py-0.5 group-hover:border-livekit-cyan/30 group-hover:text-livekit-cyan transition-all duration-500">
+									<Badge variant="outline" class="border-border text-muted-foreground text-[10px] uppercase tracking-widest px-2.5 py-0.5 group-hover:border-livekit-cyan/30 group-hover:text-livekit-cyan transition-all duration-500">
 										{feature.badge}
 									</Badge>
 								)}
@@ -88,23 +92,68 @@ const features = [
 			</div>
 		</section>
 
-		<!-- CTA Section -->
-		<section class="relative rounded-[2.5rem] bg-livekit-blue/10 border border-livekit-blue/20 p-12 md:p-24 text-center space-y-10 overflow-hidden">
-			<div class="absolute top-0 right-0 w-64 h-64 bg-livekit-blue/20 blur-[100px] -z-10"></div>
-			<div class="absolute bottom-0 left-0 w-64 h-64 bg-livekit-cyan/10 blur-[100px] -z-10"></div>
-			
-			<h2 class="text-4xl md:text-6xl font-bold tracking-tighter max-w-3xl mx-auto leading-[1.1]">
-				Let's build something amazing together.
-			</h2>
-			<p class="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-light">
-				I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions.
-			</p>
+		<!-- Latest from the Blog -->
+		<section class="space-y-10 relative">
+			<div class="flex items-end justify-between gap-4">
+				<div class="space-y-3">
+					<h2 class="text-4xl md:text-5xl font-bold tracking-tighter text-livekit-cyan">Latest posts</h2>
+					<p class="text-lg text-muted-foreground font-light">
+						Thoughts on Linux, development, and open source.
+					</p>
+				</div>
+				<a 
+					href="/blog" 
+					class="hidden sm:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-livekit-cyan transition-colors duration-300 shrink-0"
+				>
+					View all
+					<span class="text-lg">→</span>
+				</a>
+			</div>
+
+			<div class="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+				{latestPosts.map((post, i) => (
+					<a 
+						href={`/blog/${post.id}`} 
+						class:list={[
+							"bento-card group relative rounded-2xl backdrop-blur-md overflow-hidden transition-all duration-500",
+							i === 0 ? "sm:col-span-2 lg:col-span-2" : "",
+						]}
+					>
+						{/* Top glow line on hover */}
+						<div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-livekit-cyan/0 to-transparent group-hover:via-livekit-cyan/60 transition-all duration-700"></div>
+
+						<div class:list={[
+							"p-6 md:p-8 flex flex-col justify-between h-full",
+							i === 0 ? "min-h-[180px]" : "min-h-[200px]",
+						]}>
+							<div class="flex items-start justify-between mb-6">
+								<Badge variant="outline" class="border-border text-muted-foreground text-[10px] uppercase tracking-widest px-2.5 py-0.5 group-hover:border-livekit-cyan/30 group-hover:text-livekit-cyan transition-all duration-500">
+									{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+								</Badge>
+								<span class="text-muted-foreground/50 text-lg group-hover:text-livekit-cyan/70 group-hover:translate-x-1 transition-all duration-300">→</span>
+							</div>
+
+							<div class="space-y-2 mt-auto">
+								<h3 class="text-xl font-bold tracking-tight text-foreground group-hover:text-livekit-cyan transition-colors duration-300 line-clamp-2">
+									{post.data.title}
+								</h3>
+								<div class="flex flex-wrap gap-2">
+									{post.data.tags?.slice(0, 3).map(tag => (
+										<span class="text-[10px] uppercase tracking-wider text-muted-foreground/60">#{tag}</span>
+									))}
+								</div>
+							</div>
+						</div>
+					</a>
+				))}
+			</div>
+
 			<a 
-				href="https://www.linkedin.com/in/lenin-agc" 
-				target="_blank"
-				class="inline-flex items-center justify-center bg-livekit-blue hover:bg-livekit-blue/90 text-white px-12 h-16 rounded-full text-xl font-medium transition-all hover:scale-105 active:scale-95 shadow-xl shadow-livekit-blue/20"
+				href="/blog" 
+				class="sm:hidden inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-livekit-cyan transition-colors duration-300"
 			>
-				Get in Touch
+				View all posts
+				<span class="text-lg">→</span>
 			</a>
 		</section>
 	</div>
