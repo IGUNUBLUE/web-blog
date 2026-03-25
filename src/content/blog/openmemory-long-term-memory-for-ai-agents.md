@@ -9,8 +9,11 @@ tags: [agents, memory, mcp, opencode, open-source, self-hosted, coding-tools]
 prev:
   text: "OpenAI WebSocket Mode: The Secret to Ultra-Fast AI Agents"
   link: "/blog/openai-websocket-mode"
-next: false
+next:
+  text: "Better Context, Less Chaos: How I Deal With LLM Nondeterminism"
+  link: "/blog/better-context-less-chaos"
 ---
+
 
 Hey everyone! Hope you're having a great week. If you've been following my recent posts on AI agents, you know I love finding tools that actually change how I work day-to-day. Today's one of those. I've been using **[OpenMemory](https://github.com/CaviraOSS/OpenMemory)** as the long-term memory layer for my agent workflows, specifically through [OpenCode](https://opencode.ai/) and MCP, and I want to walk you through why it's worth your attention.
 
