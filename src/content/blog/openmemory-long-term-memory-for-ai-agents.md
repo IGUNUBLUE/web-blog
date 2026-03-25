@@ -12,36 +12,23 @@ prev:
 next: false
 ---
 
-Hey everyone! Hope you're having a great week. If you've been following my recent posts on AI agents, you know I love finding tools that actually change how I work day-to-day. Today's one of those. I've been using **[OpenMemory](https://github.com/CaviraOSS/OpenMemory)** as the long-term memory layer for my agent workflows — specifically through [OpenCode](https://opencode.ai/) and MCP — and I want to walk you through why it's worth your attention.
+Hey everyone! Hope you're having a great week. If you've been following my recent posts on AI agents, you know I love finding tools that actually change how I work day-to-day. Today's one of those. I've been using **[OpenMemory](https://github.com/CaviraOSS/OpenMemory)** as the long-term memory layer for my agent workflows, specifically through [OpenCode](https://opencode.ai/) and MCP, and I want to walk you through why it's worth your attention.
 
-The problem it solves is simple: LLMs forget everything between conversations. Every time you start a new chat, it's like meeting someone with total amnesia. And most so-called "memory solutions" aren't really memory — they're just RAG (Retrieval-Augmented Generation) with a fancy name.
+The problem it solves is simple: LLMs forget everything between conversations. Every time you start a new chat, it's like meeting someone with total amnesia. And most so-called "memory solutions" aren't really memory, they're just RAG (Retrieval-Augmented Generation) with a fancy name.
 
 OpenMemory is different.
 
 ## What is OpenMemory?
 
-OpenMemory describes itself as a "cognitive memory engine" for LLMs and agents. It's not a vector database with marketing copy. It's an actual memory system, inspired by how the human brain organizes knowledge.
+Instead of another vector database with fancy marketing, OpenMemory is an actual memory system inspired by how we organize knowledge. It doesn't just treat everything as a flat string of text. It actually categorizes what it hears: it separates **episodic** events (like "the user mentioned they prefer dark mode") from **semantic** facts ("Python is a programming language") and **procedural** skills like deployment steps. It even tracks emotional tone and its own "reflective" insights about a conversation.
 
-The key difference is that it understands *what kind of thing* you're remembering:
-
-- **Episodic**: events that happened ("the user mentioned they prefer dark mode")
-- **Semantic**: facts and knowledge ("Python is a programming language")
-- **Procedural**: skills and processes ("to deploy, run `npm run build`")
-- **Emotional**: detected feelings and tones
-- **Reflective**: the agent's own insights and conclusions
-
-On top of all that, it's **completely self-hosted and local-first**. You can run it with SQLite on your own machine without depending on any external service.
+The best part? It's completely self-hosted and local-first. It runs on SQLite right on your machine, so you aren't tethered to a cloud provider or paying for every single memory recall.
 
 ## Why RAG Isn't Enough
 
-A typical RAG pipeline does this: take text, chunk it, embed it into a vector store, and retrieve by similarity. It works fine for Q&A over documents, but it doesn't understand:
+Most RAG pipelines just chunk text, embed it, and pull back whatever is mathematically similar. It's basically a glorified search engine. But similarity isn't memory. A basic vector store doesn't understand if something is a hard fact or just a fleeting preference. It doesn't know what's important, how memories relate to each other, or, most crucially, *when* something was true.
 
-- Whether something is a fact, a preference, or an event
-- How recent or important the information is
-- How it relates to other memories
-- What was true at a specific point in time
-
-OpenMemory handles all of that through its **Temporal Knowledge Graph**: every memory has `valid_from` and `valid_to` timestamps, so you can reason about "what was true three weeks ago?" instead of just "what's similar to this query?".
+OpenMemory solves the time problem with a **Temporal Knowledge Graph**. Every memory has a timestamp, so your agent can actually reason about what was true three weeks ago versus what changed yesterday. It's context with a timeline, it's not just a pile of documents.
 
 ## Up and Running in 10 Seconds
 
@@ -85,7 +72,7 @@ No cloud config, no third-party API keys, no waiting 3 seconds for a remote serv
 
 This is the part I want to focus on, because it's what I actually use day-to-day.
 
-[OpenCode](https://opencode.ai/) is a terminal-based AI coding assistant that speaks MCP natively. OpenMemory ships its own MCP server, so you can connect the two with a few lines of config and suddenly your coding sessions have persistent memory — across projects, across restarts, across everything.
+[OpenCode](https://opencode.ai/) is a terminal-based AI coding assistant that speaks MCP natively. OpenMemory ships its own MCP server, so you can connect the two with a few lines of config and suddenly your coding sessions have persistent memory across projects, across restarts, across everything.
 
 ### Step 1: Start the OpenMemory server
 
@@ -118,42 +105,19 @@ In your OpenCode config (or any MCP-compatible client), add the OpenMemory serve
 }
 ```
 
-That's really it. From this point on, OpenCode can call these MCP tools automatically:
-
-- `openmemory_store` — save something worth remembering
-- `openmemory_query` — retrieve relevant context before a response
-- `openmemory_get` — fetch a specific memory by ID
-- `openmemory_reinforce` — signal that a memory is important and should decay slower
-- `openmemory_list` — browse what's been stored
+That's really it. From this point on, OpenCode can call these MCP tools automatically to store context, query relevant memories, or even "reinforce" a specific fact so it stays in the agent's short-term recall longer.
 
 ### The Memory-First Workflow
 
-Here's the discipline I've settled on after using this daily. I codified it in my project's `AGENTS.md` so every AI agent that touches the repo follows the same pattern:
+I codified my workflow in `AGENTS.md` so every AI agent that touches this repository follows the same pattern. It's a simple loop: **retrieve first**, **apply**, and **persist**. Before any non-trivial task, the agent queries OpenMemory for context like past architecture decisions or user preferences. Then it applies that context to the current task so I don't have to explain things for the tenth time. Finally, it persists a concise summary of what just happened so the next session can pick up the thread.
 
-1. **Retrieve first** — before any non-trivial task, the agent queries OpenMemory for prior context: past decisions, unresolved issues, user preferences.
-2. **Apply** — use those memories to avoid re-deciding things that were already settled in an earlier session.
-3. **Persist** — after a decision or completed task, store a concise summary so the next session can pick up where you left off.
-4. **Structure** — prefer factual memories for stable truths ("this project uses `pnpm`") and contextual memories for richer narrative ("we chose SQLite over Postgres because the deployment target is a single VPS").
-5. **Sanitize** — never store secrets, credentials, tokens, or sensitive personal data.
-
-This retrieve → apply → persist loop is the real power of OpenMemory. It turns your coding agent from something that starts from scratch every time into something that genuinely builds context over time.
+It's important to keep these memories structured. I prefer factual ones for stable truths ("this project uses `pnpm`") and contextual ones for the richer "why" behind a decision. And obviously, we **sanitize everything**. No secrets, tokens, or personal stuff ever enters the memory layer. This loop genuinely builds context over time, turning a coding agent from a one-shot help bot into a teammate with a memory.
 
 ### What This Looks Like in Practice
 
-Let's say you tell OpenCode something like:
+If I tell OpenCode that a project uses `pnpm` and deploys to Vercel, it doesn't just forget that once the terminal closes. Next week, when I'm working on a deploy command, OpenCode queries OpenMemory first and already has the context. No re-explaining my setup.
 
-> "This project always uses `pnpm`, not `npm`. And we deploy to Vercel."
-
-With OpenMemory connected, that gets stored as a semantic memory tied to your user context. Next session — different terminal, different day — when you ask OpenCode to help with a deploy command, it queries OpenMemory first and already knows your setup. No re-explaining.
-
-In my case, I also store things like:
-- project conventions and constraints
-- architecture decisions and why they were made
-- which commands to prefer and which to avoid
-- task completion summaries so follow-up sessions have context
-- bug root-cause discoveries so we don't re-investigate the same issues
-
-I even have it as a rule in my `AGENTS.md`: if OpenMemory is unavailable, the agent should still proceed using the repo state and fresh investigation — but it should explicitly note the reduced context so future sessions can recover.
+I use this to store everything from project conventions and constraints to architecture "whys" and even the root causes of old bugs. I've even made it a rule: if OpenMemory is down, the agent keeps working but notes the missing context. It makes for a massively better pair-programming experience when the AI actually pays attention to how you work.
 
 ### Also Great With Claude and Other MCP Clients
 
@@ -163,7 +127,7 @@ The same `.mcp.json` config works for Claude Desktop, Cursor, and Windsurf. For 
 claude mcp add --transport http openmemory http://localhost:8080/mcp
 ```
 
-But honestly, the combo with OpenCode is where it shines for me — it's terminal-native, fast, and the memory layer makes it feel like a real pair programmer that actually pays attention.
+But honestly, the combo with OpenCode is where it shines for me: it's terminal-native, fast, and the memory layer makes it feel like a real pair programmer that actually pays attention.
 
 ## Other Integrations Worth Knowing
 
@@ -183,48 +147,19 @@ Supported connectors include: GitHub, Notion, Google Drive, Google Sheets, Googl
 
 ## Backing Up and Porting Your Memories
 
-One thing that surprised me is how portable OpenMemory's data is. Under the hood it's just SQLite files sitting on a Docker volume. That means you can back them up, version them in your repo, and restore them on a different machine with a single `tar` command.
+I was surprised by how portable this setup is. Since it's all just SQLite files on a Docker volume, you can back up a session with a simple `tar` command. 
 
-Here's the gist of how I do it:
+To create a backup, I just run a quick Docker command that grabs the volume in read-only mode and writes a compressed snapshot into my `docs/open-memories` folder. Restoring on a new machine is just the inverse: you spin up the container, stop it, dump the backup into the volume, and start it back up. 
 
-**Create a backup** (read-only from the Docker volume):
-
-```bash
-mkdir -p docs/open-memories
-docker run --rm \
-  -v openmemory_openmemory_data:/source:ro \
-  -v "$PWD/docs/open-memories":/backup \
-  alpine sh -c 'cd /source && tar czf /backup/openmemory-backup-$(date +%Y%m%d-%H%M%S).tgz .'
-```
-
-**Restore on a new machine:**
-
-```bash
-docker run --rm \
-  -v openmemory_openmemory_data:/target \
-  -v "$PWD/docs/open-memories":/backup \
-  alpine sh -c 'cd /target && tar xzf /backup/openmemory-backup-YYYYMMDD-HHMMSS.tgz'
-```
-
-I keep my latest backup committed to the repo so I can clone the project on any machine, run `docker compose up`, restore the memory snapshot, and my agent sessions continues right where they left off. It's like carrying your agent's brain in a tarball.
-
-A few rules I follow:
-- Always restore the **full** memory set — don't cherry-pick individual memories
-- If the target already has memories, create a safety backup before overwriting
-- If memories are missing after a restore, re-run the full restore before trying anything else
+I keep my latest memory snapshot committed to the repo. When I clone the project on a new laptop, I can restore that brain and pick up right where I left off on my desktop. There are just a few rules I follow to keep it clean: always restore the full set instead of cherry-picking, and always create a safety backup before overwriting an existing memory bank.
 
 ## Memory Hygiene: What Not to Store
 
-This is important and easy to overlook. Since OpenMemory is so frictionless, it's tempting to just store everything. But you should be intentional about what goes in:
-
-- ✅ **Store**: architecture decisions, user preferences, task summaries, bug root causes, project conventions
-- ❌ **Never store**: API keys, tokens, passwords, payment details, personal data, or sensitive credentials
-
-Memory is meant to supplement your repo's documentation — not replace it, and definitely not become a security liability. I explicitly enforce this in my `AGENTS.md` instructions so the AI agents themselves follow the same hygiene rules.
+It's tempting to store everything, but you have to be intentional. I follow a simple rule: store architecture decisions, user preferences, and bug root causes, but **never** store API keys, tokens, passwords, or anything that turns your memory pool into a security risk. I explicitly enforce this in my `AGENTS.md` so the agents themselves know to ignore the sensitive stuff. Memory should simplify your work, not become a liability.
 
 ## The Numbers
 
-If you're wondering whether it's worth it over a SaaS alternative, here's the comparison from the project:
+If you're wondering whether it's worth it over a SaaS alternative, here's how the benchmarks look. It's roughly 2-3x faster and significantly cheaper because you aren't paying the "SaaS tax" on every single token your agent remembers.
 
 | Metric | OpenMemory | Typical SaaS |
 |---|---|---|
@@ -233,20 +168,18 @@ If you're wondering whether it's worth it over a SaaS alternative, here's the co
 | Monthly cost | ~$6 | $90+ |
 | Throughput | 40 ops/s | 10 ops/s |
 
-**2-3x faster and 6-10x cheaper**. And your data never leaves your own infrastructure.
+Your data never leaves your own infrastructure, and you aren't waiting 3 seconds for a remote service to wake up. For a fast-moving coding assistant, that latency difference is the difference between a smooth flow and a frustrating lag.
 
 ## My Thoughts
 
-What I love most about OpenMemory is that it attacks the right problem. It's not just "store embeddings more efficiently" — it's a rethinking of how an agent should model knowledge, time, and the relative importance of information.
+The reason I'm sticking with OpenMemory isn't just because it's fast or cheap. It's because it actually models memory the right way. It isn't just dumping embeddings into a bucket; it understands time, importance, and the type of knowledge it's holding. 
 
-The **decay engine** is particularly clever: instead of just deleting old memories with a TTL, it simulates adaptive forgetting per sector. Episodic memories (events) decay faster than semantic ones (facts) — just like human memory works.
+The **decay engine** is the most interesting part for me. It simulates how we actually forget: episodic events fade faster, while semantic facts stick around. It makes the agent feel less like a database and more like a partner that knows what's still relevant and what isn't.
 
-In practice, building the full loop — MCP config, memory-first retrieval, structured persistence, Docker backups, and hygiene rules — has completely changed how I interact with AI coding tools. It's the difference between an assistant that starts from zero every session and one that genuinely accumulates understanding of your codebase, your preferences, and your past decisions over time.
+Setting this up with MCP and OpenCode has been one of the biggest upgrades to my daily setup. It’s hard to go back to a "goldfish" AI once you've had one that actually builds a mental model of your codebase over weeks of work.
 
-I've been running this stack for weeks now and I can't go back. The agent remembers my project patterns, knows my deploy targets, recalls why we made certain architecture choices, and picks up where it left off after a reboot. That's the promise of "AI that learns" — and OpenMemory actually delivers on it.
+It's still early days (v2 is a full rewrite), but even in its current state, it’s remarkably useful. You can check it out on [GitHub](https://github.com/CaviraOSS/OpenMemory) or hit their [landing page](https://openmemory.cavira.app/).
 
-It's open-source, under active development (heads up: it's currently being rewritten into v2), and fully self-hostable. You can get started on [GitHub](https://github.com/CaviraOSS/OpenMemory) or check out the [landing page](https://openmemory.cavira.app/).
-
-Are you using OpenCode or any MCP-compatible tool? Have you tried giving it persistent memory? I'd love to hear how you're setting things up.
+If you’re already using something for long-term memory, or if you’ve been sticking to manual context-passing, I’d love to hear how you’re handling it.
 
 Happy coding!

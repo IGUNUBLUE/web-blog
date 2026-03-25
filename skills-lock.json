@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "humanizer": {
+      "source": "brandonwise/humanizer",
+      "sourceType": "github",
+      "computedHash": "ce7127cb3bb8f67f8829b74f65b4ba51ec769999b958d6d28246af6b0ec4466a"
+    }
+  }
+}
