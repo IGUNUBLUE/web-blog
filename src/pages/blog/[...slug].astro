@@ -342,14 +342,11 @@ const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 	/* Dual theme Shiki support */
 	html.dark .astro-code,
 	html.dark .astro-code span {
-		color: var(--shiki-dark) !important;
-		background-color: var(--shiki-dark-bg) !important;
-	}
-
-	html.light .astro-code,
-	html.light .astro-code span {
-		color: var(--shiki-light) !important;
-		background-color: var(--shiki-light-bg) !important;
+		color: var(--shiki-dark, inherit) !important;
+		background-color: var(--shiki-dark-bg, transparent) !important;
+		font-style: var(--shiki-dark-font-style, inherit) !important;
+		font-weight: var(--shiki-dark-font-weight, inherit) !important;
+		text-decoration: var(--shiki-dark-text-decoration, inherit) !important;
 	}
 
 	.article-prose
